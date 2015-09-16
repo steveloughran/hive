@@ -62,7 +62,8 @@
   </modules>
 
   <properties>
-    <hive.version.shortname>1.2.0</hive.version.shortname>
+    <hive.version.shortname>1.2.2</hive.version.shortname>
+    <hive.group>org.apache.hive</hive.group>
 
     <!-- Build Properties -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -505,11 +506,6 @@
       <dependency>
         <groupId>org.apache.curator</groupId>
         <artifactId>curator-framework</artifactId>
-        <version>${curator.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.curator</groupId>
-        <artifactId>curator-recipes</artifactId>
         <version>${curator.version}</version>
       </dependency>
       <dependency>
