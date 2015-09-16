@@ -166,11 +166,11 @@ public class OperationManager extends AbstractService {
     return null;
   }
 
-  private synchronized void addOperation(Operation operation) {
+  protected synchronized void addOperation(Operation operation) {
     handleToOperation.put(operation.getHandle(), operation);
   }
 
-  private synchronized Operation removeOperation(OperationHandle opHandle) {
+  protected synchronized Operation removeOperation(OperationHandle opHandle) {
     return handleToOperation.remove(opHandle);
   }
 

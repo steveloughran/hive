@@ -800,7 +800,7 @@ public class CliDriver {
    * @param ss CliSessionState to query for db name
    * @return String to show user for current db value
    */
-  private static String getFormattedDb(HiveConf conf, CliSessionState ss) {
+  public static String getFormattedDb(HiveConf conf, CliSessionState ss) {
     if (!HiveConf.getBoolVar(conf, HiveConf.ConfVars.CLIPRINTCURRENTDB)) {
       return "";
     }
@@ -820,7 +820,7 @@ public class CliDriver {
    * @param s String for which to generate equivalent whitespace
    * @return  Whitespace
    */
-  private static String spacesForString(String s) {
+  protected static String spacesForString(String s) {
     if (s == null || s.length() == 0) {
       return "";
     }

@@ -89,13 +89,9 @@ public class HiveServer2 extends CompositeService {
 
   @Override
   public synchronized void init(HiveConf hiveConf) {
-    cliService = new CLIService(this);
+    cliService = createCliService(hiveConf);
     addService(cliService);
-    if (isHTTPTransportMode(hiveConf)) {
-      thriftCLIService = new ThriftHttpCLIService(cliService);
-    } else {
-      thriftCLIService = new ThriftBinaryCLIService(cliService);
-    }
+    thriftCLIService = createThriftService(hiveConf, cliService);
     addService(thriftCLIService);
     super.init(hiveConf);
 
@@ -108,6 +104,33 @@ public class HiveServer2 extends CompositeService {
       }
     });
   }
+
+
+  /**
+   * Create the CLI service
+   * @param hiveConf the service hive configuration
+   * @return an uninited CLI service instance.
+   */
+  protected CLIService createCliService(HiveConf hiveConf) {
+    return new CLIService(this);
+  }
+
+  /**
+   * Create the thrift service
+   * @param hiveConf configuration of the server
+   * @param cli the (uninited) CLI instance
+   * @return
+   */
+  protected ThriftCLIService createThriftService(HiveConf hiveConf, CLIService cli) {
+    ThriftCLIService thriftService;
+    if (isHTTPTransportMode(hiveConf)) {
+      thriftService = new ThriftHttpCLIService(cli);
+    } else {
+      thriftService = new ThriftBinaryCLIService(cli);
+    }
+    return thriftService;
+  }
+
 
   public static boolean isHTTPTransportMode(HiveConf hiveConf) {
     String transportMode = System.getenv("HIVE_SERVER2_TRANSPORT_MODE");
@@ -472,7 +495,7 @@ public class HiveServer2 extends CompositeService {
    * Create an appropriate response object,
    * which has executor to execute the appropriate command based on the parsed options.
    */
-  static class ServerOptionsProcessor {
+  public static class ServerOptionsProcessor {
     private final Options options = new Options();
     private org.apache.commons.cli.CommandLine commandLine;
     private final String serverName;

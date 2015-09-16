@@ -55,7 +55,9 @@ public class SessionManager extends CompositeService {
   private HiveConf hiveConf;
   private final Map<SessionHandle, HiveSession> handleToSession =
       new ConcurrentHashMap<SessionHandle, HiveSession>();
-  private final OperationManager operationManager = new OperationManager();
+  private OperationManager operationManager;
+
+
   private ThreadPoolExecutor backgroundOperationPool;
   private boolean isOperationLogEnabled;
   private File operationLogRootDir;
@@ -76,6 +78,7 @@ public class SessionManager extends CompositeService {
   @Override
   public synchronized void init(HiveConf hiveConf) {
     this.hiveConf = hiveConf;
+    operationManager = createOperationManager(hiveConf);
     //Create operation log root directory, if operation logging is enabled
     if (hiveConf.getBoolVar(ConfVars.HIVE_SERVER2_LOGGING_OPERATION_ENABLED)) {
       initOperationLogRootDir();
@@ -83,6 +86,14 @@ public class SessionManager extends CompositeService {
     createBackgroundOperationPool();
     addService(operationManager);
     super.init(hiveConf);
+  }
+
+  /**
+   * Create the Operation Manager; invoked from serviceInit()
+   * @return an uninited operation manager instance
+   */
+  protected OperationManager createOperationManager(HiveConf hiveConf) {
+    return new OperationManager();
   }
 
   private void createBackgroundOperationPool() {

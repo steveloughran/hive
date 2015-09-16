@@ -79,7 +79,7 @@ public class CLIService extends CompositeService implements ICLIService {
   @Override
   public synchronized void init(HiveConf hiveConf) {
     this.hiveConf = hiveConf;
-    sessionManager = new SessionManager(hiveServer2);
+    sessionManager = createSessionManager(hiveConf, hiveServer2);
     addService(sessionManager);
     //  If the hadoop cluster is secure, do a kerberos login for the service from the keytab
     if (UserGroupInformation.isSecurityEnabled()) {
@@ -116,6 +116,10 @@ public class CLIService extends CompositeService implements ICLIService {
     }
     setupBlockedUdfs();
     super.init(hiveConf);
+  }
+
+  protected SessionManager createSessionManager(HiveConf hiveConf, HiveServer2 server) {
+    return new SessionManager(server);
   }
 
   private void applyAuthorizationConfigPolicy(HiveConf newHiveConf) throws HiveException,
